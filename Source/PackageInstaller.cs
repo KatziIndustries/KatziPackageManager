@@ -4,7 +4,7 @@ public static class PackageInstaller
 {
     public const string KUR_URL = "https://kur.katzi.org";
 
-    private static HttpClient _client = new();
+    private static readonly HttpClient _client = new();
 
     public static async Task Install(InstallCommand installCommand)
     {
