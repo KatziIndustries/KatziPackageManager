@@ -2,7 +2,7 @@
 
 internal static class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         Command command = CliParser.Parse(args);
 
@@ -22,7 +22,7 @@ internal static class Program
 
         if (command is InstallCommand installCommand)
         {
-            PackageInstaller.Install(installCommand);
+            await PackageInstaller.Install(installCommand);
         }
     }
 
