@@ -20,6 +20,12 @@ public static class CliParser
                 else
                     return new ErrorCommand(Error.MissingArguments, "Install: Package name required");
 
+            case "query":
+                if (args.Length > 1)
+                    return new QueryCommand(args[1]);
+                else
+                    return new ErrorCommand(Error.MissingArguments, "Query: Package name required");
+
             default:
                 return new ErrorCommand(Error.Unknown, $"Unknown Argument: {args[0]}");
         }

@@ -6,28 +6,29 @@ internal static class Program
     {
         Command command = CliParser.Parse(args);
 
-        if (command is ErrorCommand errorCommand)
+        switch (command)
         {
-            switch (errorCommand.Error)
-            {
-                case Error.WrongUsage:
-                    PrintUsage();
-                    return;
+            case ErrorCommand errorCommand:
+                ErrorArticulater.ArticulateCommandError(errorCommand);
+                break;
 
-                case Error.MissingArguments or Error.Unknown:
-                    Console.WriteLine(errorCommand.Description);
-                    return;
-            }
+            case InstallCommand installCommand:
+                {
+                    Error error = await Packager.Install(installCommand.PackageName);
+                    if (error != Error.Success)
+                        ErrorArticulater.ArticulateCommandError(error, installCommand);
+                    break;
+                }
+
+            case QueryCommand queryCommand:
+                {
+                    string? katzibuild = await Packager.GetKatzibuild(queryCommand.PackageName);
+                    if (katzibuild != null)
+                        Console.WriteLine(katzibuild);
+                    else
+                        ErrorArticulater.ArticulateCommandError(new(Error.PackageNotFound));
+                    break;
+                }
         }
-
-        if (command is InstallCommand installCommand)
-        {
-            await PackageInstaller.Install(installCommand);
-        }
-    }
-
-    private static void PrintUsage()
-    {
-        Console.WriteLine("Usage: kpm [Action] [Options]");
     }
 }
