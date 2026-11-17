@@ -22,7 +22,7 @@ public static class CliParser
 
             case "query":
                 if (args.Length > 1)
-                    return new QueryCommand(args[1]);
+                    return new QueryCommand(args[1], args.Contains("--raw") || args.Contains("-r"));
                 else
                     return new ErrorCommand(Error.MissingArguments, "Query: Package name required");
 
