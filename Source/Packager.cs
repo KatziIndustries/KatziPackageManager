@@ -8,13 +8,13 @@ public static class Packager
 
     public static async Task<Error> Install(string packageName)
     {
-        string? katzibuild = await GetKatzibuild(packageName);
+        Katzibuild? katzibuild = await GetKatzibuild(packageName);
         if (katzibuild == null) return Error.PackageNotFound;
 
         return Error.Success;
     }
 
-    public static async Task<string?> GetKatzibuild(string packageName)
+    public static async Task<Katzibuild?> GetKatzibuild(string packageName)
     {
         HttpResponseMessage response = await _client.GetAsync(GetPackageUrl(packageName));
 
@@ -23,7 +23,8 @@ public static class Packager
         if (responseContent == string.Empty)
             return null;
 
-        return responseContent;
+
+        return KatzibuildParser.Parse(responseContent);
     }
 
     private static string GetPackageUrl(string packageName)

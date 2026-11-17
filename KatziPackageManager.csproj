@@ -11,4 +11,8 @@
     <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="KatzibuildParser" Version="1.0.0" />
+  </ItemGroup>
+
 </Project>

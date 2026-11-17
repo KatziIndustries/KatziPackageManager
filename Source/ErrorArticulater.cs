@@ -18,7 +18,7 @@ public static class ErrorArticulater
                         PrintUsage();
                         break;
 
-                    case Error.MissingArguments or Error.Unknown:
+                    default:
                         Console.WriteLine(errorCommand.Description);
                         break;
                 }
