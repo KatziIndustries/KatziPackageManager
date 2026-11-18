@@ -48,7 +48,7 @@ internal static class Program
     {
         if (raw)
         {
-            Console.WriteLine("Not implemented yet");
+            Console.WriteLine(katzibuild.Raw);
             return;
         }
 
