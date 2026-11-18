@@ -2,13 +2,14 @@
 
 internal static class Program
 {
-    public static string CacheDirectory => Path.Combine(Environment.GetEnvironmentVariable("XDG_CACHE_HOME")!, "kpm");
+    public static string CacheDirectory => Path.Combine(Environment.GetEnvironmentVariable("XDG_CACHE_HOME")??
+                                                        Environment.GetEnvironmentVariable("HOME") + "/.cache" ??
+                                                        throw new DirectoryNotFoundException("Couldn't find cache directory")!, "kpm");
 
     public static async Task Main(string[] args)
     {
         // Check if XDG_CACHE_HOME is set and throw an exception if not
         {
-            _ = Environment.GetEnvironmentVariable("XDG_CACHE_HOME") ?? throw new DirectoryNotFoundException("Couldn't find cache directory");
             if (!Directory.Exists(CacheDirectory))
             {
                 Directory.CreateDirectory(CacheDirectory);
