@@ -1,6 +1,8 @@
 using Katzi.Package;
 
-public readonly struct VerifyCommand : Command
+namespace KatziPackageManager.Commands;
+
+public readonly struct VerifyCommand : ICommand
 {
     public readonly string PackageDirPath;
 
