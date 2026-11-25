@@ -1,20 +1,23 @@
 using Katzi.Package;
 using KatziPackageManager.Commands;
 
-public readonly struct BuildCommand : ICommand
+public struct BuildCommand(string packagePath, string? outputDir = null) : ICommand
 {
-    public bool Ok { get; init; } = false;
-    public readonly string OutputFileLocation = "";
+    public bool Ok { get; private set; } = false;
 
-    public BuildCommand(string packagePath, string? outputDir = null)
+    public string OutputFileLocation { get; private set; } = "";
+    public readonly string PackagePath = packagePath;
+    public readonly string? PreferredOutputDir = outputDir;
+
+    public void Execute()
     {
-        VerifyCommand verify = new(packagePath);
+        VerifyCommand verify = new(PackagePath);
         verify.Print();
 
         if (!verify.Ok)
             return;
 
-        OutputFileLocation = KatziPackager.Create(packagePath, outputDir) ?? "";
+        OutputFileLocation = KatziPackager.Create(PackagePath, PreferredOutputDir) ?? "";
 
         if (OutputFileLocation == null)
             Ok = false;

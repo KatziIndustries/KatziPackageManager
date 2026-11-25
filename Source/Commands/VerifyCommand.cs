@@ -2,57 +2,55 @@ using Katzi.Package;
 
 namespace KatziPackageManager.Commands;
 
-public readonly struct VerifyCommand : ICommand
+public struct VerifyCommand(string packageDirPath) : ICommand
 {
-    public readonly string PackageDirPath;
+    public readonly string PackageDirPath = packageDirPath;
 
-    public readonly string[]? MissingRequiredFiles;
-    public readonly string[]? MissingOptionalFiles;
-    public readonly string[]? UnknownFiles;
+    public string[]? MissingRequiredFiles { get; private set; }
+    public string[]? MissingOptionalFiles { get; private set; }
+    public string[]? UnknownFiles { get; private set; }
 
-    public bool Ok => (MissingRequiredFiles == null) && (UnknownFiles == null);
+    public readonly bool Ok => (MissingRequiredFiles == null) && (UnknownFiles == null);
 
-    public VerifyCommand(string packageDirPath)
+    public void Execute()
     {
-        PackageDirPath = packageDirPath;
-
-        MissingRequiredFiles = KatziPackager.GetMissingRequiredFiles(packageDirPath);
-        MissingOptionalFiles = KatziPackager.GetMissingOptionalFiles(packageDirPath);
-        UnknownFiles = KatziPackager.GetUnknownFiles(packageDirPath);
+        MissingRequiredFiles = KatziPackager.GetMissingRequiredFiles(PackageDirPath);
+        MissingOptionalFiles = KatziPackager.GetMissingOptionalFiles(PackageDirPath);
+        UnknownFiles = KatziPackager.GetUnknownFiles(PackageDirPath);
     }
 
-    public void Print()
+    public readonly void Print()
     {
         if (MissingRequiredFiles != null)
         {
-            PrettyPrinter.PrintWarning("Missing required files:");
+            PrettyPrinter.Print(ErrorLevel.Error, "Missing required files:");
             foreach (string file in MissingRequiredFiles)
-                PrettyPrinter.PrintInfo($" - {file}");
+                PrettyPrinter.Print(ErrorLevel.Info, $" - {file}");
         }
-        else PrettyPrinter.PrintYay("All required files found");
+        else PrettyPrinter.Print(ErrorLevel.Yay, "All required files found");
 
         if (MissingOptionalFiles != null)
         {
-            PrettyPrinter.PrintWarning("Missing optional files:");
+            PrettyPrinter.Print(ErrorLevel.Warning, "Missing optional files:");
             foreach (string file in MissingOptionalFiles)
-                PrettyPrinter.PrintInfo($" - {file}");
+                PrettyPrinter.Print(ErrorLevel.Info, $" - {file}");
         }
-        else PrettyPrinter.PrintYay("All optional files found");
+        else PrettyPrinter.Print(ErrorLevel.Yay, "All optional files found");
 
         if (UnknownFiles != null)
         {
-            PrettyPrinter.PrintWarning("Unknown files:");
+            PrettyPrinter.Print(ErrorLevel.Warning, "Unknown files:");
             foreach (string file in UnknownFiles)
-                PrettyPrinter.PrintInfo($" - {file}");
+                PrettyPrinter.Print(ErrorLevel.Info, $" - {file}");
         }
 
         if (Ok)
         {
-            PrettyPrinter.PrintYay("Package verified succesfully");
+            PrettyPrinter.Print(ErrorLevel.Yay, "Package verified succesfully");
         }
         else
         {
-            PrettyPrinter.PrintError("Package could not be verified");
+            PrettyPrinter.Print(ErrorLevel.Error, "Package could not be verified");
         }
     }
 }

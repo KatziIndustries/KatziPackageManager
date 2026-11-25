@@ -1,9 +1,15 @@
 public static class PrettyPrinter
 {
-    public static void PrintInfo(string text) => Print(ConsoleColor.White, text);
-    public static void PrintWarning(string text) => Print(ConsoleColor.Yellow, text);
-    public static void PrintError(string text) => Print(ConsoleColor.Red, text);
-    public static void PrintYay(string text) => Print(ConsoleColor.Green, text);
+    public static void Print(ErrorLevel errorLevel, string message)
+    {
+        switch (errorLevel)
+        {
+            case ErrorLevel.Info: Print(ConsoleColor.White, message); break;
+            case ErrorLevel.Warning: Print(ConsoleColor.Yellow, message); break;
+            case ErrorLevel.Error: Print(ConsoleColor.Red, message); break;
+            case ErrorLevel.Yay: Print(ConsoleColor.Green, message); break;
+        }
+    }
 
     private static void Print(ConsoleColor color, string text)
     {

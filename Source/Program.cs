@@ -6,17 +6,29 @@ internal static class Program
 {
     public static void Main(string[] args)
     {
-        BuildCommand build = new("/home/katzi/KatziPackage");
+        ICommand command = CliParser.Parse(args);
 
-        if (build.Ok)
-        {
-            PrettyPrinter.PrintYay("Succesfully built package");
-            PrettyPrinter.PrintInfo($"The package can be found at '{build.OutputFileLocation}'");
-        }
-        else
-        {
-            PrettyPrinter.PrintError("Failed to build package");
-        }
+        command.Execute();
 
+        switch (command)
+        {
+            case VerifyCommand verifyCommand:
+                verifyCommand.Print();
+                break;
+
+            case BuildCommand buildCommand:
+                if (!buildCommand.Ok)
+                    PrettyPrinter.Print(ErrorLevel.Error, "Failed to build package");
+                else
+                {
+                    PrettyPrinter.Print(ErrorLevel.Yay, "Successfully built package!");
+                    PrettyPrinter.Print(ErrorLevel.Info, $"The package can be found at '{buildCommand.OutputFileLocation}'");
+                }
+                break;
+
+            case ErrorCommand errorCommand:
+                PrettyPrinter.Print(errorCommand.ErrorLevel, errorCommand.ErrorMessage);
+                break;
+        }
     }
 }
