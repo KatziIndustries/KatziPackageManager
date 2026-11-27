@@ -17,8 +17,31 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- <PackageReference Include="KatziPackage" Version="1.0.1" /> -->
-    <ProjectReference Include="../KatziPackage/KatziPackage.csproj" />
+    <PackageReference Include="KatziPackage" Version="1.0.3" />
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="11.0.0" />
   </ItemGroup>
+  
+  <PropertyGroup Condition="'$(_IsPublishing)' == 'true'">
+    <DefineConstants>$(DefineConstants);STATIC_SQLITE</DefineConstants>
+  </PropertyGroup>
+  
+  <ItemGroup Condition="'$(_IsPublishing)' != 'true'">
+    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="3.0.5" />
+  </ItemGroup>
+  
+  <ItemGroup Condition="'$(_IsPublishing)' == 'true'">
+    <PackageReference Include="SQLitePCLRaw.provider.internal" Version="3.0.5" />
+    
+    <DirectPInvoke Include="__Internal" />
+    <NativeLibrary Include="Native/libsqlite3.a" Condition="$([MSBuild]::IsOSPlatform('Linux'))" />
+    <NativeLibrary Include="Native/libsqlite3.lib" Condition="$([MSBuild]::IsOSPlatform('Windows'))" />
+  </ItemGroup>
+  
+  <Target Name="RemoveFileAfterPublish" AfterTargets="Publish">
+    <ItemGroup>
+      <FilesToDelete Include="publish/*.so" />
+    </ItemGroup>
+    <Delete Files="@(FilesToDelete)" />
+  </Target>
 
 </Project>

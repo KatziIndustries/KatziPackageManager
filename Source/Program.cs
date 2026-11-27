@@ -1,11 +1,19 @@
-using Katzi.Package;
-
 using KatziPackageManager.Commands;
 
 internal static class Program
 {
+    public static string DataPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "kpm");
+
     public static void Main(string[] args)
     {
+        Directory.CreateDirectory(DataPath);
+
+#if STATIC_SQLITE
+        SQLitePCL.raw.SetProvider(new SQLitePCL.SQLite3Provider_internal());
+#else
+        SQLitePCL.Batteries_V2.Init();
+#endif
+
         ICommand command = CliParser.Parse(args);
 
         command.Execute();
@@ -37,5 +45,7 @@ internal static class Program
                 PrettyPrinter.Print(errorCommand.ErrorLevel, errorCommand.ErrorMessage);
                 break;
         }
+
+        PackageDatabase.Close();
     }
 }

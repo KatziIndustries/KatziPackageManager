@@ -23,6 +23,33 @@ public struct InstallCommand(string packagePath) : ICommand
 
         PrettyPrinter.Print(ErrorLevel.Info, $"Installing '{katziPackage.Metadata.Name} {katziPackage.Metadata.Version}'");
 
+        Package? existingPackage = PackageDatabase.GetPackage(katziPackage.Metadata.Name);
+        if (existingPackage != null)
+        {
+            if (existingPackage.Version == katziPackage.Metadata.Version)
+            {
+                PrettyPrinter.Print(ErrorLevel.Error, $"Package '{katziPackage.Metadata.Name} {katziPackage.Metadata.Version}' has already been installed");
+                return;
+            }
+        }
+
+        Package package = new()
+        {
+            Name = katziPackage.Metadata.Name,
+            Description = katziPackage.Metadata.Description,
+            Type = (long)katziPackage.Metadata.Type,
+            Url = katziPackage.Metadata.Url,
+            Version = katziPackage.Metadata.Version,
+            Dependencies = katziPackage.Metadata.Dependencies
+        };
+
+        long packageId = PackageDatabase.AddPackage(package);
+        if (packageId == -1)
+        {
+            PrettyPrinter.Print(ErrorLevel.Error, $"Failed to install package: failed to add package to database");
+            return;
+        }
+
         if (katziPackage.PreInstallScript != null)
         {
             PrettyPrinter.Print(ErrorLevel.Info, "Running pre-install script");
