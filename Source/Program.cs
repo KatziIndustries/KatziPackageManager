@@ -26,6 +26,13 @@ internal static class Program
                 }
                 break;
 
+            case InstallCommand installCommand:
+                if (!installCommand.Ok)
+                    PrettyPrinter.Print(ErrorLevel.Error, "Failed to install package");
+                else
+                    PrettyPrinter.Print(ErrorLevel.Yay, "Installed package successfully!");
+                break;
+
             case ErrorCommand errorCommand:
                 PrettyPrinter.Print(errorCommand.ErrorLevel, errorCommand.ErrorMessage);
                 break;

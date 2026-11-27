@@ -11,6 +11,9 @@ public static class CliParser
             
         verify (directory): 
             verifies if a directory could be built as a .kpg
+            
+        install (package path/package name in kur): 
+            installs a .kpg from the kur or from a file on the system
     """;
 
     public static ICommand Parse(string[] args)
@@ -34,6 +37,12 @@ public static class CliParser
                 }
                 else
                     return new ErrorCommand(ErrorLevel.Error, "No directory specified");
+
+            case "install":
+                if (args.Length > 1)
+                    return new InstallCommand(Path.GetFullPath(args[1]));
+                else
+                    return new ErrorCommand(ErrorLevel.Error, "No package specified");
 
             default:
                 return new ErrorCommand(ErrorLevel.Error, $"Unknown command '{args[1]}'");
