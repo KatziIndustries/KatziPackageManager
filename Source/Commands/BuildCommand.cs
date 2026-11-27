@@ -17,9 +17,16 @@ public struct BuildCommand(string packagePath, string? outputDir = null) : IComm
         if (!verify.Ok)
             return;
 
-        OutputFileLocation = KatziPackager.Create(PackagePath, PreferredOutputDir) ?? "";
+        try
+        {
+            OutputFileLocation = KatziPackager.Create(PackagePath, PreferredOutputDir) ?? "";
+        }
+        catch (IOException)
+        {
+            PrettyPrinter.Print(ErrorLevel.Error, "A built package with the same name already exists at the output path");
+        }
 
-        if (OutputFileLocation == null)
+        if (OutputFileLocation == string.Empty)
             Ok = false;
         else
             Ok = true;
