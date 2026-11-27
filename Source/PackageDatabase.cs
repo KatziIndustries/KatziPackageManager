@@ -23,7 +23,7 @@ public static class PackageDatabase
             type INTEGER NOT NULL
         );
         
-        CREATE TABLE IF NOT EXISTS packages_dependencies (
+        CREATE TABLE IF NOT EXISTS package_dependencies (
             package_id INTEGER REFERENCES packages(id),
             dependency TEXT NOT NULL
         );
@@ -70,16 +70,19 @@ public static class PackageDatabase
 
             using (var reader = command.ExecuteReader())
             {
-                package = new()
+                if (reader.Read())
                 {
-                    Id = reader.GetInt64(0),
-                    Name = reader.GetString(1),
-                    Description = reader.GetString(2),
-                    Version = reader.GetString(3),
-                    Url = reader.GetString(4),
-                    Type = reader.GetInt64(5),
-                    Dependencies = [.. dependencies]
-                };
+                    package = new()
+                    {
+                        Id = reader.GetInt64(0),
+                        Name = reader.GetString(1),
+                        Description = reader.GetString(2),
+                        Version = reader.GetString(3),
+                        Url = reader.GetString(4),
+                        Type = reader.GetInt64(5),
+                        Dependencies = [.. dependencies]
+                    };
+                }
             }
         }
 
@@ -141,6 +144,7 @@ public static class PackageDatabase
 
     public static List<string> GetPackageDependencies(long id)
     {
+
         using var command = _connection.CreateCommand();
         command.CommandText = "SELECT dependency FROM package_dependencies WHERE package_id = $id";
         command.Parameters.AddWithValue("$id", id);
