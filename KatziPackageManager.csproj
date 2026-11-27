@@ -14,6 +14,8 @@
     <CopyDebugSymbolsToOutputDirectory>false</CopyDebugSymbolsToOutputDirectory>
     <DebugSymbols>false</DebugSymbols>
     <DebugType>none</DebugType>
+
+    <AssemblyName>kpm</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -36,12 +38,5 @@
     <NativeLibrary Include="Native/libsqlite3.a" Condition="$([MSBuild]::IsOSPlatform('Linux'))" />
     <NativeLibrary Include="Native/libsqlite3.lib" Condition="$([MSBuild]::IsOSPlatform('Windows'))" />
   </ItemGroup>
-  
-  <Target Name="RemoveFileAfterPublish" AfterTargets="Publish">
-    <ItemGroup>
-      <FilesToDelete Include="publish/*.so" />
-    </ItemGroup>
-    <Delete Files="@(FilesToDelete)" />
-  </Target>
 
 </Project>
